@@ -17,6 +17,10 @@
       "Benches",
       "Shade areas"
     ],
+    "photos": ["park1.jpg", "park2.jpg"],
+    "phone": "555-123-4567",
+    "email": "info@pawsomepark.com",
+    "website": "https://pawsomepark.com",
     "createdAt": "2025-04-15T00:00:00",
     "updatedAt": null,
     "reviews": [
@@ -59,6 +63,10 @@
       "Pet beds",
       "Outdoor patio"
     ],
+    "photos": ["cafe1.jpg", "cafe2.jpg"],
+    "phone": "555-987-6543",
+    "email": "hello@whiskerscafe.com",
+    "website": "https://whiskerscafe.com",
     "createdAt": "2025-04-18T00:00:00",
     "updatedAt": null,
     "reviews": [
@@ -86,7 +94,7 @@
     "id": 3,
     "name": "Pet Haven Home",
     "description": "A beautiful vacation home with a fenced yard, pet doors, and all necessities for your furry friends.",
-    "price": 0,
+    "price": 150,
     "address": "789 Oak Road, San Francisco, CA",
     "location": "789 Oak Road, San Francisco, CA",
     "type": "home",
@@ -103,6 +111,10 @@
       "Feeding stations",
       "Pet toys"
     ],
+    "photos": ["home1.jpg", "home2.jpg"],
+    "phone": "555-234-5678",
+    "email": "stay@pethavenhome.com",
+    "website": "https://pethavenhome.com",
     "createdAt": "2025-03-28T00:00:00",
     "updatedAt": null,
     "reviews": [
@@ -130,7 +142,7 @@
     "id": 4,
     "name": "Pets & Pillows Hotel",
     "description": "Luxury hotel that welcomes pets of all sizes. Special pet services available including walking and grooming.",
-    "price": 0,
+    "price": 200,
     "address": "101 Sunset Blvd, Los Angeles, CA",
     "location": "101 Sunset Blvd, Los Angeles, CA",
     "type": "hotel",
@@ -146,6 +158,10 @@
       "Pet sitting",
       "Pet beds"
     ],
+    "photos": ["hotel1.jpg", "hotel2.jpg"],
+    "phone": "555-876-5432",
+    "email": "reservations@petsandpillows.com",
+    "website": "https://petsandpillows.com",
     "createdAt": "2025-04-02T00:00:00",
     "updatedAt": null,
     "reviews": [
@@ -162,7 +178,7 @@
         "id": 402,
         "listingId": 4,
         "reviewer": "Jesse Taylor",
-        "rating": 4,
+        "rating": 4.5,
         "comment": "Great amenities for pets, though a bit pricey.",
         "createdAt": "2025-03-20T00:00:00",
         "listing": null
@@ -190,6 +206,10 @@
       "Water stations",
       "Pet events"
     ],
+    "photos": ["store1.jpg", "store2.jpg"],
+    "phone": "555-345-6789",
+    "email": "shop@furryfriendsstore.com",
+    "website": "https://furryfriendsstore.com",
     "createdAt": "2025-04-12T00:00:00",
     "updatedAt": null,
     "reviews": [
@@ -234,6 +254,10 @@
       "Tropical atmosphere",
       "Pet-friendly seating"
     ],
+    "photos": ["moochs1.jpg", "moochs2.jpg"],
+    "phone": "555-111-2222",
+    "email": "hello@moochsmeow.com",
+    "website": "https://moochsmeow.com",
     "createdAt": "2025-04-28T00:00:00",
     "updatedAt": null,
     "reviews": [

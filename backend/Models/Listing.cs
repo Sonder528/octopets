@@ -16,6 +16,10 @@ public class Listing
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
+    public string? Website { get; set; }
+    
     // Navigation properties
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
