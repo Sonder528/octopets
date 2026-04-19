@@ -34,7 +34,21 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
 
       <div className="listing-details-under-name">
         <h3>{listing.name}</h3>
-        <div className="listing-address">{listing.location}</div>        <div className="allowed-pets-horizontal">
+        <div className="listing-meta-row">
+          <div className="listing-address">
+            <span>📍</span> {listing.location}
+          </div>
+          {listing.price > 0 ? (
+            <div className="listing-price">
+              ${listing.price.toFixed(0)}/night
+            </div>
+          ) : (
+            <div className="listing-price free">
+              Free
+            </div>
+          )}
+        </div>
+        <div className="allowed-pets-horizontal">
           {listing.allowedPets.map(petId => {
             const pet = PET_TYPES.find(p => p.id === petId);
             return pet ? (

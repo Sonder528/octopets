@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES, LISTING_TYPES, AMENITIES } from '../data/constants';
 import { PET_TYPES } from '../data/constantsJsx';
 import { DataService } from '../data/dataService';
-import { ListingType, PetType } from '../types/types';
+import { Listing, ListingType, PetType } from '../types/types';
 import '../styles/AddListing.css';
 
 const initialFormState = {
@@ -33,7 +33,7 @@ const AddListing: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [createdListing, setCreatedListing] = useState<Listing | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -143,7 +143,8 @@ const AddListing: React.FC = () => {
         contactInfo: formData.contactInfo
       };
 
-      await DataService.createListing(listingData);
+      const newListing = await DataService.createListing(listingData);
+      setCreatedListing(newListing);
       setSubmitSuccess(true);
     } catch (error) {
       console.error('Failed to create listing:', error);
@@ -157,6 +158,13 @@ const AddListing: React.FC = () => {
     setFormData(initialFormState);
     setErrors({});
     setSubmitSuccess(false);
+    setCreatedListing(null);
+  };
+
+  const handleViewListing = () => {
+    if (createdListing) {
+      navigate(`/listing/${createdListing.id}`);
+    }
   };
 
   if (submitSuccess) {
@@ -164,13 +172,18 @@ const AddListing: React.FC = () => {
       <div className="add-listing-page">
         <div className="success-message">
           <h2>🎉 Listing Created Successfully!</h2>
-          <p>Your pet-friendly venue has been added to our directory.</p>
+          <p>Your pet-friendly venue <strong>"{createdListing?.name}"</strong> has been added to our directory.</p>
           <p>Thank you for helping other pet owners discover great places!</p>
           <div className="form-actions" style={{ justifyContent: 'center', marginTop: 'var(--space-6)' }}>
+            {createdListing && (
+              <button type="button" onClick={handleViewListing} className="btn btn-black">
+                View Your Listing
+              </button>
+            )}
             <Link to={ROUTES.LISTINGS} className="btn btn-outline">
               View All Listings
             </Link>
-            <button type="button" onClick={resetForm} className="btn btn-black">
+            <button type="button" onClick={resetForm} className="btn btn-outline">
               Add Another Listing
             </button>
           </div>
@@ -391,27 +404,6 @@ const AddListing: React.FC = () => {
           </button>
         </div>
       </form>
-
-      {showComingSoon && (
-        <div className="coming-soon-modal" onClick={() => setShowComingSoon(false)}>
-          <div className="coming-soon-content" onClick={e => e.stopPropagation()}>
-            <h2>🚧 Coming Soon!</h2>
-            <p>
-              This feature is currently under development. 
-              We're working hard to bring you the ability to add your own pet-friendly venues.
-            </p>
-            <p>
-              In the meantime, feel free to browse our existing listings or contact us if you'd like to suggest a venue!
-            </p>
-            <button 
-              onClick={() => setShowComingSoon(false)} 
-              className="btn btn-black"
-            >
-              Got it
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -63,8 +63,24 @@ const ListingDetails: React.FC = () => {
           <div className="listing-location">
             <span>📍</span> {listing.location}
           </div>
-          <div className="rating-container">
-            <span>★ {listing.rating.toFixed(1)} <span className="reviews-gray">({listing.reviews.length} reviews)</span></span>
+          {listing.address && listing.address !== listing.location && (
+            <div className="listing-address-detail">
+              <span>🏠</span> {listing.address}
+            </div>
+          )}
+          <div className="rating-price-row">
+            <div className="rating-container">
+              <span>★ {listing.rating.toFixed(1)} <span className="reviews-gray">({listing.reviews.length} reviews)</span></span>
+            </div>
+            {listing.price > 0 ? (
+              <div className="listing-price-detail">
+                ${listing.price.toFixed(0)} <span className="price-unit">per night</span>
+              </div>
+            ) : (
+              <div className="listing-price-detail free">
+                Free Entry
+              </div>
+            )}
           </div>
           
           <div className="hero-contact-info">
