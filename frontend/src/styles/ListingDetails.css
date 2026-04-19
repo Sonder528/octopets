@@ -94,6 +94,42 @@
   margin-bottom: 0;
 }
 
+.listing-address-detail {
+  display: flex;
+  align-items: center;
+  color: var(--neutral-200);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.rating-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.listing-price-detail {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--neutral-100);
+}
+
+.listing-price-detail .price-unit {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  color: var(--neutral-300);
+}
+
+.listing-price-detail.free {
+  color: var(--primary-300);
+}
+
 .listing-actions {
   display: flex;
   gap: var(--space-3);

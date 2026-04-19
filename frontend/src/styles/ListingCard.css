@@ -9,6 +9,14 @@
   padding: var(--space-2) 0;
 }
 
+.listing-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: var(--space-3);
+}
+
 /* Address under name, styled for left alignment and spacing */
 .listing-address {
   color: var(--neutral-600);
@@ -17,6 +25,17 @@
   padding: 0;
   line-height: 1.4;
   text-align: left;
+}
+
+.listing-price {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--neutral-900);
+  white-space: nowrap;
+}
+
+.listing-price.free {
+  color: var(--primary-600);
 }
 
 /* Allowed pets horizontal row styling */
