@@ -1,8 +1,7 @@
 import { appConfig } from '../config/appConfig';
-import { Listing, Review } from '../types/types';
+import { Listing, Review, ContactInfo } from '../types/types';
 import listingsData from './listingsData';
 
-// Debug environment setup
 console.log('Environment Setup:', {
     REACT_APP_USE_MOCK_DATA: process.env.REACT_APP_USE_MOCK_DATA,
     REACT_APP_USE_MOCK_DATA_PARSED: process.env.REACT_APP_USE_MOCK_DATA?.toLowerCase() === 'true',
@@ -10,10 +9,94 @@ console.log('Environment Setup:', {
     apiUrl: appConfig.apiUrl
 });
 
-// Mock data
+type ApiListing = {
+    id: number | string;
+    name: string;
+    description: string;
+    price: number;
+    address: string | null;
+    location: string;
+    type: string | null;
+    allowedPets: string[];
+    amenities: string[];
+    photos: string[];
+    rating: number;
+    phone: string | null;
+    email: string | null;
+    website: string | null;
+    createdAt: string;
+    updatedAt: string | null;
+    reviews: ApiReview[];
+};
+
+type ApiReview = {
+    id: number | string;
+    listingId: number | string;
+    reviewer: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+};
+
+const mapApiListingToFrontend = (apiListing: ApiListing): Listing => {
+    return {
+        id: String(apiListing.id),
+        name: apiListing.name,
+        description: apiListing.description,
+        price: Number(apiListing.price) || 0,
+        address: apiListing.address || apiListing.location,
+        location: apiListing.location,
+        type: apiListing.type || '',
+        allowedPets: apiListing.allowedPets || [],
+        amenities: apiListing.amenities || [],
+        photos: apiListing.photos || [],
+        rating: Number(apiListing.rating) || 0,
+        createdAt: apiListing.createdAt,
+        updatedAt: apiListing.updatedAt,
+        contactInfo: {
+            phone: apiListing.phone || '',
+            email: apiListing.email || '',
+            website: apiListing.website || ''
+        },
+        reviews: (apiListing.reviews || []).map(mapApiReviewToFrontend)
+    };
+};
+
+const mapApiReviewToFrontend = (apiReview: ApiReview): Review => {
+    return {
+        id: String(apiReview.id),
+        listingId: String(apiReview.listingId),
+        reviewer: apiReview.reviewer,
+        rating: Number(apiReview.rating) || 0,
+        comment: apiReview.comment,
+        createdAt: apiReview.createdAt
+    };
+};
+
+const mapFrontendListingToApi = (listing: Partial<Listing>): Partial<ApiListing> => {
+    const result: Partial<ApiListing> = {};
+    
+    if (listing.name !== undefined) result.name = listing.name;
+    if (listing.description !== undefined) result.description = listing.description;
+    if (listing.price !== undefined) result.price = listing.price;
+    if (listing.address !== undefined) result.address = listing.address;
+    if (listing.location !== undefined) result.location = listing.location;
+    if (listing.type !== undefined) result.type = listing.type;
+    if (listing.allowedPets !== undefined) result.allowedPets = listing.allowedPets;
+    if (listing.amenities !== undefined) result.amenities = listing.amenities;
+    if (listing.photos !== undefined) result.photos = listing.photos;
+    
+    if (listing.contactInfo) {
+        result.phone = listing.contactInfo.phone || null;
+        result.email = listing.contactInfo.email || null;
+        result.website = listing.contactInfo.website || null;
+    }
+    
+    return result;
+};
+
 const mockListings: Listing[] = listingsData;
 
-// API service
 export class DataService {
     static async getListings(): Promise<Listing[]> {
         console.log('DataService: Fetching listings, using mock data:', appConfig.useMockData);
@@ -29,9 +112,9 @@ export class DataService {
                 console.error('DataService: Failed to fetch listings, status:', response.status);
                 throw new Error('Failed to fetch listings');
             }
-            const data = await response.json();
+            const data: ApiListing[] = await response.json();
             console.log('DataService: Fetched listings from API:', data.length, 'items');
-            return data;
+            return data.map(mapApiListingToFrontend);
         } catch (error) {
             console.error('DataService: Error fetching listings:', error);
             throw error;
@@ -57,9 +140,9 @@ export class DataService {
                 console.error('DataService: Failed to fetch listing, status:', response.status);
                 throw new Error('Failed to fetch listing');
             }
-            const data = await response.json();
+            const data: ApiListing = await response.json();
             console.log('DataService: Fetched listing from API:', data.name);
-            return data;
+            return mapApiListingToFrontend(data);
         } catch (error) {
             console.error('DataService: Error fetching listing:', error);
             throw error;
@@ -82,16 +165,16 @@ export class DataService {
                 console.error('DataService: Failed to fetch reviews, status:', response.status);
                 throw new Error('Failed to fetch reviews');
             }
-            const data = await response.json();
+            const data: ApiReview[] = await response.json();
             console.log('DataService: Fetched reviews from API:', data.length, 'items');
-            return data;
+            return data.map(mapApiReviewToFrontend);
         } catch (error) {
             console.error('DataService: Error fetching reviews:', error);
             throw error;
         }
     }
 
-    static async createListing(listing: Omit<Listing, 'id' | 'reviews' | 'rating'>): Promise<Listing> {
+    static async createListing(listing: Omit<Listing, 'id' | 'reviews' | 'rating' | 'createdAt' | 'updatedAt'>): Promise<Listing> {
         console.log('DataService: Creating listing using mock data:', appConfig.useMockData);
         
         if (appConfig.useMockData) {
@@ -99,7 +182,9 @@ export class DataService {
                 ...listing,
                 id: Math.random().toString(36).substr(2, 9),
                 reviews: [],
-                rating: 0
+                rating: 0,
+                createdAt: new Date().toISOString(),
+                updatedAt: null
             };
             mockListings.push(newListing);
             console.log('DataService: Created mock listing:', newListing.name);
@@ -107,28 +192,29 @@ export class DataService {
         }
 
         try {
+            const apiListing = mapFrontendListingToApi(listing);
             const response = await fetch(`${appConfig.apiUrl}/listings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(listing)
+                body: JSON.stringify(apiListing)
             });
 
             if (!response.ok) {
                 console.error('DataService: Failed to create listing, status:', response.status);
                 throw new Error('Failed to create listing');
             }
-            const data = await response.json();
+            const data: ApiListing = await response.json();
             console.log('DataService: Created listing via API:', data.name);
-            return data;
+            return mapApiListingToFrontend(data);
         } catch (error) {
             console.error('DataService: Error creating listing:', error);
             throw error;
         }
     }
 
-    static async createReview(listingId: string, review: Omit<Review, 'id' | 'date'>): Promise<Review> {
+    static async createReview(listingId: string, review: Omit<Review, 'id' | 'createdAt' | 'listingId'>): Promise<Review> {
         console.log('DataService: Creating review for listing', listingId, 'using mock data:', appConfig.useMockData);
         
         if (appConfig.useMockData) {
@@ -141,12 +227,12 @@ export class DataService {
             const newReview: Review = {
                 ...review,
                 id: Math.random().toString(36).substr(2, 9),
-                date: new Date().toISOString().split('T')[0]
+                listingId: listingId,
+                createdAt: new Date().toISOString()
             };
             
             listing.reviews.push(newReview);
             
-            // Update listing rating
             listing.rating = listing.reviews.reduce((sum: number, r: Review) => sum + r.rating, 0) / listing.reviews.length;
             
             console.log('DataService: Created mock review for listing:', listing.name);
@@ -154,21 +240,26 @@ export class DataService {
         }
 
         try {
+            const apiReview = {
+                ...review,
+                listingId: parseInt(listingId) || listingId
+            };
+            
             const response = await fetch(`${appConfig.apiUrl}/reviews/by-listing/${listingId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(review)
+                body: JSON.stringify(apiReview)
             });
 
             if (!response.ok) {
                 console.error('DataService: Failed to create review, status:', response.status);
                 throw new Error('Failed to create review');
             }
-            const data = await response.json();
+            const data: ApiReview = await response.json();
             console.log('DataService: Created review via API');
-            return data;
+            return mapApiReviewToFrontend(data);
         } catch (error) {
             console.error('DataService: Error fetching reviews:', error);
             throw error;
